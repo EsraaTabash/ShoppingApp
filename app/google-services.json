@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "10049485613",
+    "project_id": "finalproject-dacf7",
+    "storage_bucket": "finalproject-dacf7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:10049485613:android:0a4c5834f6ce77e70e31a4",
+        "android_client_info": {
+          "package_name": "com.example.android2finalproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBemSwoEqNgq2W2q_qLnrJqSmhgirJ2quY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
