@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="24dp"
-                android:background="@drawable/container_rounded_orange"
+                android:background="@drawable/container_rounded_purple"
                 android:layout_marginTop="75dp"
                 android:elevation="4dp"
                 android:gravity="center">
@@ -110,10 +110,10 @@
                         android:layout_height="wrap_content"
                         android:text="Create as Admin (optional)"
                         android:textSize="14sp"
-                        android:textColor="#F6A943"
+                        android:textColor="@color/purple_500"
                         android:layout_gravity="start"
                         app:useMaterialThemeColors="false"
-                        app:buttonTint="#F6A943" />
+                        app:buttonTint="@color/purple_500" />
                 </LinearLayout>
 
 
@@ -122,7 +122,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:text="Sign Up"
-                    android:backgroundTint="#F6A943"
+                    android:backgroundTint="@color/purple_500"
                     android:textColor="#FFFFFF"
                     android:fontFamily="sans-serif-condensed-medium"
                     android:elevation="4dp"
@@ -135,7 +135,7 @@
                     android:layout_height="48dp"
                     android:text="Already have an account? Login"
                     android:backgroundTint="#FFFFFF"
-                    android:textColor="#F6A943"
+                    android:textColor="@color/purple_500"
                     android:fontFamily="sans-serif-condensed-medium"
                     android:elevation="2dp"
                     android:textSize="16sp" />

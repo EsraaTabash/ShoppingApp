@@ -25,6 +25,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
         val user = FirebaseAuth.getInstance().currentUser
         // if no user return him to login

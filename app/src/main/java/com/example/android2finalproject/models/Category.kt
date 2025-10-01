@@ -1,7 +1,6 @@
-package com.example.android2finalproject.models
+package com.esraa.shoppingapp.data.model
 
 data class Category(
-    var id: String? = null,
-    var name: String? = null,
-    var iconUrl: String? = null
+    val id: String = "",
+    val name: String = ""
 )

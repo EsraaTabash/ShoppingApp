@@ -1,12 +1,11 @@
-package com.example.android2finalproject.models
+package com.esraa.shoppingapp.data.model
 
 data class Product(
-    var pName: String? = null,
-    var pDescription: String? = null,
-    var pPrice: Double? = null,
-    var categoryId: String? = null,
-    var pRating: Double? = null,
-    var imageUri: String? = null,
-    var latitude: Double? = null,
-    var longitude: Double? = null
+    val pName: String = "",
+    val pDescription: String = "",
+    val pPrice: Double = 0.0,
+    val pType: String = "",
+    val pRating: Double = 0.0,
+    val imageUri: String = "",
+    val id: String = ""
 )
