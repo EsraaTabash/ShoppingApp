@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+    android:id="@+id/dashboard"
+    android:icon="@drawable/dashboard"
+    android:title="Dashboard" />
+    <item
         android:id="@+id/statistic"
         android:icon="@drawable/ic_baseline_bar_chart_24"
-    android:title="Statistics" />
-
+        android:title="Statistics" />
     <item
-        android:id="@+id/addProduct"
-        android:icon="@drawable/ic_baseline_add_box_24"
-    android:title="Add Product" />
+        android:id="@+id/profile"
+        android:icon="@drawable/user"
+        android:title="Profile" />
 
-    <item
-        android:id="@+id/shopping"
-        android:icon="@drawable/ic_baseline_shopping_cart_24"
-    android:title="Shop" />
 </menu>

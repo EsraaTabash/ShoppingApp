@@ -5,29 +5,30 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toast
 import com.example.android2finalproject.R
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import com.example.android2finalproject.data.FirestoreService
+import com.example.android2finalproject.models.User
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 /**
- * A simple [Fragment] subclass.
+ * A simple [Fragment] subclass for user profile.
  * Use the [ProfileFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
 class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    private lateinit var tvName: TextView
+    private lateinit var tvEmail: TextView
+    private lateinit var tvRole: TextView
+
+    //service
+    private val fs = FirestoreService()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
@@ -38,23 +39,42 @@ class ProfileFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProfileFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        //bind views
+        tvName  = view.findViewById(R.id.tvName)
+        tvEmail = view.findViewById(R.id.tvEmail)
+        tvRole  = view.findViewById(R.id.tvRole)
+
+        //load data from firebase instead of temp data
+        loadUserDataFromFirestore()
     }
+
+    //get user data and show on screen (name // email // role)
+    private fun loadUserDataFromFirestore() {
+        fs.getUserData(
+            onSuccess = { user ->
+                showUser(user)
+            },
+            onError = { e ->
+                Toast.makeText(requireContext(), "fail load user: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+
+    //fill screen with user data
+    private fun showUser(user: User) {
+        tvName.text  = user.name
+        tvEmail.text = user.email
+
+        if (user.isAdmin) {
+            tvRole.text = "Admin"
+            tvRole.setTextColor(resources.getColor(android.R.color.holo_red_dark))
+        } else {
+            tvRole.text = "User"
+            tvRole.setTextColor(resources.getColor(android.R.color.holo_green_dark))
+        }
+    }
+
 }

@@ -2,11 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/shopping"
-        android:icon="@drawable/ic_baseline_shopping_cart_24"
-    android:title="Shop" />
-
+        android:icon="@drawable/shop"
+        android:title="Shop" />
     <item
-        android:id="@+id/statistic"
-        android:icon="@drawable/ic_baseline_bar_chart_24"
-    android:title="Statistics" />
+        android:id="@+id/cart"
+        android:icon="@drawable/cart"
+        android:title="Cart" />
+    <item
+        android:id="@+id/profile"
+        android:icon="@drawable/user"
+        android:title="Profile" />
 </menu>

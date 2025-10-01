@@ -15,7 +15,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <!-- صورة المنتج -->
         <ImageView
             android:id="@+id/item_iv"
             android:layout_width="90dp"
@@ -23,19 +22,18 @@
             android:scaleType="centerCrop"
             android:adjustViewBounds="true"
             android:layout_marginEnd="14dp"
-            android:layout_gravity="center_vertical"
+            android:layout_marginStart="14dp"
+            android:layout_gravity="center"
             android:src="@drawable/ic_launcher_background"
             android:background="@android:color/darker_gray"
             android:clipToOutline="true" />
 
-        <!-- تفاصيل المنتج -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <!-- اسم المنتج -->
             <TextView
                 android:id="@+id/item_name"
                 android:layout_width="match_parent"
@@ -46,9 +44,9 @@
                 android:textColor="@android:color/black"
                 android:ellipsize="end"
                 android:maxLines="1"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="4dp" />
 
-            <!-- نوع المنتج -->
             <TextView
                 android:id="@+id/item_type"
                 android:layout_width="wrap_content"
@@ -58,7 +56,6 @@
                 android:textColor="@android:color/darker_gray"
                 android:layout_marginBottom="4dp" />
 
-            <!-- وصف المنتج -->
             <TextView
                 android:id="@+id/item_description"
                 android:layout_width="match_parent"
@@ -70,13 +67,11 @@
                 android:ellipsize="end"
                 android:layout_marginBottom="8dp" />
 
-            <!-- السعر والتقييم -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_gravity="center_vertical"/>
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/item_price"
@@ -85,7 +80,8 @@
                     android:text="$99.99"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textColor="@android:color/holo_green_dark" />
+                    android:textColor="@android:color/holo_green_dark"
+                    android:layout_marginEnd="12dp" />
 
                 <TextView
                     android:id="@+id/item_rating"
@@ -96,8 +92,47 @@
                     android:textStyle="bold"
                     android:textColor="@android:color/holo_orange_dark" />
             </LinearLayout>
-
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginStart="8dp">
+
+            <ImageView
+                android:id="@+id/addToCartIv"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/cart"
+                android:tint="@color/purple_500"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:padding="4dp" />
+
+            <ImageView
+                android:id="@+id/editIv"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/pencil"
+                android:tint="@color/purple_500"
+                android:visibility="gone"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:padding="4dp" />
+
+            <ImageView
+                android:id="@+id/deleteIv"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="10dp"
+                android:tint="@color/purple_500"
+                android:visibility="gone"
+                android:src="@drawable/trash"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:padding="4dp" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 </androidx.cardview.widget.CardView>

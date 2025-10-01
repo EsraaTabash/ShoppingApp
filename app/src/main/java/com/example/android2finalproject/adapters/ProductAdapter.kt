@@ -12,7 +12,8 @@ import com.esraa.shoppingapp.data.model.Product
 
 class ProductAdapter(
     private val productList: List<Product>,
-    private val onProductClick: (Product) -> Unit   // callback -> fragment رح يستخدمه
+    private val onProductClick: (Product) -> Unit,   // pass this 2 funs from
+    private val onAddToCart: (Product) -> Unit      // fragments to adapter in events time
 ) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
 
     class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -20,6 +21,7 @@ class ProductAdapter(
         val price: TextView = itemView.findViewById(R.id.item_price)
         val type: TextView = itemView.findViewById(R.id.item_type)
         val img: ImageView = itemView.findViewById(R.id.item_iv)
+        val addToCartIv: ImageView = itemView.findViewById(R.id.addToCartIv)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
@@ -34,8 +36,13 @@ class ProductAdapter(
         holder.type.text = product.pType
         Glide.with(holder.img.context).load(product.imageUri).into(holder.img)
 
+        // when click on the product card
         holder.itemView.setOnClickListener {
             onProductClick(product)
+        }
+        // when click on cart icon
+        holder.addToCartIv.setOnClickListener {
+            onAddToCart(product)
         }
     }
 

@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.example.android2finalproject.fragments.AddProductFragment
+import com.example.android2finalproject.fragments.AdminDashboardFragment
+import com.example.android2finalproject.fragments.CartFragment
 import com.example.android2finalproject.fragments.ShoppingFragment
 import com.example.android2finalproject.fragments.StatisticFragment
+import com.example.android2finalproject.fragments.ProfileFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -16,16 +18,16 @@ import com.google.firebase.firestore.FirebaseFirestore
 class MainActivity : AppCompatActivity() {
 
     private lateinit var bottomNavigationView: BottomNavigationView
-    //three fragments
+    //fragments
     private val statisticFragment = StatisticFragment()
-    private val addProductFragment = AddProductFragment()
+    private val adminDashboardFragment = AdminDashboardFragment()
     private val shoppingFragment = ShoppingFragment()
-
+    private val profileFragment = ProfileFragment()
+    private val cartFragment = CartFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
         val user = FirebaseAuth.getInstance().currentUser
@@ -45,6 +47,8 @@ class MainActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "cant decide the role ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                //deault user nav
+                setupBottomNav(false)
             }
     }
 
@@ -62,26 +66,40 @@ class MainActivity : AppCompatActivity() {
             if (isAdmin) R.menu.bottom_nav_admin else R.menu.bottom_nav_user
         )
 
-        setCurrentFragment(if (isAdmin) statisticFragment else shoppingFragment)
-        bottomNavigationView.selectedItemId = if (isAdmin) R.id.statistic else R.id.shopping
+        // default fragment based role
+        setCurrentFragment(
+            if (isAdmin) adminDashboardFragment else shoppingFragment
+        )
+        bottomNavigationView.selectedItemId = if (isAdmin) R.id.dashboard else R.id.shopping
 
         bottomNavigationView.setOnItemSelectedListener { item ->
-            // stop re open the same fragment
+            // stop re-open the same fragment
             if (bottomNavigationView.selectedItemId == item.itemId) return@setOnItemSelectedListener true
 
             // menu icon -> its own fragment
             when (item.itemId) {
-                R.id.statistic  -> setCurrentFragment(statisticFragment)
-                R.id.addProduct -> setCurrentFragment(addProductFragment)
-                R.id.shopping   -> setCurrentFragment(shoppingFragment)
+                // admin tabs
+                R.id.statistic  -> {
+                    if (isAdmin) setCurrentFragment(statisticFragment) else return@setOnItemSelectedListener false
+                }
+                R.id.dashboard -> {
+                    if (isAdmin) setCurrentFragment(adminDashboardFragment) else return@setOnItemSelectedListener false
+                }
+                R.id.profile -> {
+                    setCurrentFragment(profileFragment)
+                }
+
+                //user tabs
+                R.id.shopping   -> {
+                    if (!isAdmin) setCurrentFragment(shoppingFragment) else return@setOnItemSelectedListener false
+                }
+                R.id.cart       -> {
+                    if (!isAdmin) setCurrentFragment(cartFragment) else return@setOnItemSelectedListener false
+                }
+
                 else -> return@setOnItemSelectedListener false
             }
             true
         }
     }
-
-
-
-
-
 }

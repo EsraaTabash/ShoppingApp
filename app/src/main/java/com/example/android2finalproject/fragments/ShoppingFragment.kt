@@ -31,7 +31,6 @@ class ShoppingFragment : Fragment() {
 //    private var param1: String? = null
 //    private var param2: String? = null
 
-
     private lateinit var rvCategories: RecyclerView
     private lateinit var rvProducts: RecyclerView
 
@@ -45,6 +44,9 @@ class ShoppingFragment : Fragment() {
     private var screenState = ScreenState.CATEGORIES
 
     private val fs = FirestoreService()
+
+    // we need this flag when add prod in cart
+    private var selectedCategoryId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +72,7 @@ class ShoppingFragment : Fragment() {
                 }
             })
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -88,6 +91,9 @@ class ShoppingFragment : Fragment() {
 
         rvCategories.layoutManager = LinearLayoutManager(requireContext())
         categoryAdapter = CategoryAdapter(categoryList) { cat ->
+            // when cat click store its id
+            selectedCategoryId = cat.id
+
             productList.clear()
             productAdapter.notifyDataSetChanged()
             showProducts()
@@ -98,10 +104,30 @@ class ShoppingFragment : Fragment() {
         rvCategories.adapter = categoryAdapter
         rvProducts.layoutManager = LinearLayoutManager(requireContext())
 
-        //when click on product
-        productAdapter = ProductAdapter(productList) { selectedProduct ->
-            Toast.makeText(requireContext(), "Selected: ${selectedProduct.pName}", Toast.LENGTH_SHORT).show()
-        }
+        //when click on product + click on cart icon
+        productAdapter = ProductAdapter(
+            productList,
+            onProductClick = { selectedProduct ->
+                Toast.makeText(requireContext(), "Selected: ${selectedProduct.pName}", Toast.LENGTH_SHORT).show()
+            },
+            onAddToCart = { selectedProduct ->
+                val catId = selectedCategoryId
+                if (catId == null) {
+                    Toast.makeText(requireContext(), "pick a category first", Toast.LENGTH_SHORT).show()
+                } else {
+                    fs.addToCart(
+                        product = selectedProduct,
+                        categoryId = catId,
+                        onSuccess = {
+                            Toast.makeText(requireContext(), "Added to cart successfully", Toast.LENGTH_SHORT).show()
+                        },
+                        onError = { e ->
+                            Toast.makeText(requireContext(), "fail add to cart=(: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                }
+            }
+        )
 
         //link pro with its rv
         rvProducts.adapter = productAdapter
