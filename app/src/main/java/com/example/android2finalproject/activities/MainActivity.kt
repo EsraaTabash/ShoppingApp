@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.example.android2finalproject.data.FirestoreService
 import com.example.android2finalproject.fragments.AdminDashboardFragment
+import com.example.android2finalproject.fragments.CartBadgeHost
 import com.example.android2finalproject.fragments.CartFragment
 import com.example.android2finalproject.fragments.ShoppingFragment
 import com.example.android2finalproject.fragments.StatisticFragment
@@ -15,7 +17,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() , CartBadgeHost {
 
     private lateinit var bottomNavigationView: BottomNavigationView
     //fragments
@@ -44,6 +46,7 @@ class MainActivity : AppCompatActivity() {
             .addOnSuccessListener { doc ->
                 val isAdmin = doc.getBoolean("isAdmin") ?: false
                 setupBottomNav(isAdmin)
+
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "cant decide the role ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
@@ -102,4 +105,25 @@ class MainActivity : AppCompatActivity() {
             true
         }
     }
+
+    override fun setCartBadge(count: Long) {
+        val badge = bottomNavigationView.getOrCreateBadge(R.id.cart)
+        if (count > 0) {
+            badge.isVisible = true
+            badge.number = count.toInt()
+        } else {
+            badge.isVisible = false
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        FirestoreService().getCartCount(
+            onSuccess = { setCartBadge(it) },
+            onError   = {
+
+            }
+        )
+    }
+
 }

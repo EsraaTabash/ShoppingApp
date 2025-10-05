@@ -1,6 +1,9 @@
+package com.example.android2finalproject.models
+
 data class CartItem(
     val productId: String = "",
     val pName: String = "",
+    val pDescription: String = "",
     val imageUri: String = "",
     val pPrice: Double = 0.0,
     val qty: Long = 1,

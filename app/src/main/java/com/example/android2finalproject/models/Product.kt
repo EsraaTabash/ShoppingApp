@@ -1,4 +1,4 @@
-package com.esraa.shoppingapp.data.model
+package com.example.android2finalproject.models
 
 data class Product(
     val pName: String = "",
@@ -7,5 +7,7 @@ data class Product(
     val pType: String = "",
     val pRating: Double = 0.0,
     val imageUri: String = "",
-    val id: String = ""
+    val id: String = "",
+    val latitude: Double? = null,
+    val longitude: Double? = null
 )

@@ -44,7 +44,6 @@
                 android:foreground="?attr/selectableItemBackgroundBorderless"
                 android:padding="4dp" />
 
-            <!-- حذف: مخفي افتراضيًا -->
             <ImageView
                 android:id="@+id/catDeleteIv"
                 android:layout_width="24dp"
@@ -52,9 +51,9 @@
                 android:layout_marginTop="10dp"
                 android:src="@drawable/trash"
                 android:visibility="gone"
-                android:tint="@color/purple_500"
                 android:foreground="?attr/selectableItemBackgroundBorderless"
-                android:padding="4dp" />
+                android:padding="4dp"
+                card_view:tint="@color/purple_500" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

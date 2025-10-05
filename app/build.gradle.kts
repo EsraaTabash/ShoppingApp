@@ -54,12 +54,13 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
 
-    // خدمات إضافية
     implementation("com.google.android.gms:play-services-location:21.3.0")
     implementation("io.coil-kt:coil:2.6.0")
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
+    implementation(libs.androidx.activity)
+    implementation(libs.play.services.maps)
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

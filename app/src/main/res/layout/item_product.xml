@@ -101,14 +101,42 @@
             android:gravity="center"
             android:layout_marginStart="8dp">
 
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/addToCartIv"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/cart"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:padding="4dp"
+                    card_view:tint="@color/purple_500" />
+
+                <TextView
+                    android:id="@+id/cartBadgeTv"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="top|end"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textSize="10sp"
+                    android:textColor="@android:color/white"
+                    android:background="@drawable/badge_circle_purple"
+                android:visibility="gone"/>
+            </FrameLayout>
+
             <ImageView
-                android:id="@+id/addToCartIv"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/cart"
-                android:tint="@color/purple_500"
+                android:id="@+id/mapIvProduct"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/map"
                 android:foreground="?attr/selectableItemBackgroundBorderless"
-                android:padding="4dp" />
+                android:padding="4dp"
+                android:visibility="gone"
+                card_view:tint="@color/purple_500" />
 
             <ImageView
                 android:id="@+id/editIv"
@@ -116,22 +144,23 @@
                 android:layout_height="24dp"
                 android:layout_marginTop="10dp"
                 android:src="@drawable/pencil"
-                android:tint="@color/purple_500"
                 android:visibility="gone"
                 android:foreground="?attr/selectableItemBackgroundBorderless"
-                android:padding="4dp" />
+                android:padding="4dp"
+                card_view:tint="@color/purple_500" />
 
             <ImageView
                 android:id="@+id/deleteIv"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginTop="10dp"
-                android:tint="@color/purple_500"
-                android:visibility="gone"
                 android:src="@drawable/trash"
+                android:visibility="gone"
                 android:foreground="?attr/selectableItemBackgroundBorderless"
-                android:padding="4dp" />
+                android:padding="4dp"
+                card_view:tint="@color/purple_500" />
         </LinearLayout>
+
 
     </LinearLayout>
 

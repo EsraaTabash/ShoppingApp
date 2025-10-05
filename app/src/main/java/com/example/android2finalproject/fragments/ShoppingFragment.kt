@@ -1,5 +1,7 @@
 package com.example.android2finalproject.fragments
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,17 +11,12 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.esraa.shoppingapp.data.model.Category
-import com.esraa.shoppingapp.data.model.Product
 import com.example.android2finalproject.R
 import com.example.android2finalproject.adapters.CategoryAdapter
 import com.example.android2finalproject.adapters.ProductAdapter
 import com.example.android2finalproject.data.FirestoreService
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//private const val ARG_PARAM1 = "param1"
-//private const val ARG_PARAM2 = "param2"
+import com.example.android2finalproject.models.Category
+import com.example.android2finalproject.models.Product
 
 /**
  * A simple [Fragment] subclass.
@@ -27,9 +24,6 @@ import com.example.android2finalproject.data.FirestoreService
  * create an instance of this fragment.
  */
 class ShoppingFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-//    private var param1: String? = null
-//    private var param2: String? = null
 
     private lateinit var rvCategories: RecyclerView
     private lateinit var rvProducts: RecyclerView
@@ -50,14 +44,6 @@ class ShoppingFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        //temporary data
-//        categoryList.clear()
-//        categoryList.add(Category("1", "Electronics"))
-//        categoryList.add(Category("2", "Clothes"))
-//        categoryList.add(Category("3", "Books"))
-//        categoryList.add(Category("4", "Shoes"))
-//        categoryList.add(Category("5", "Accessories"))
 
         //handle back process from products to categories
         requireActivity().onBackPressedDispatcher.addCallback(this,
@@ -89,7 +75,6 @@ class ShoppingFragment : Fragment() {
 
         rvCategories.layoutManager = LinearLayoutManager(requireContext())
 
-        rvCategories.layoutManager = LinearLayoutManager(requireContext())
         categoryAdapter = CategoryAdapter(categoryList) { cat ->
             // when cat click store its id
             selectedCategoryId = cat.id
@@ -102,9 +87,10 @@ class ShoppingFragment : Fragment() {
         }
         //link cat with rv
         rvCategories.adapter = categoryAdapter
+
         rvProducts.layoutManager = LinearLayoutManager(requireContext())
 
-        //when click on product + click on cart icon
+        //when click on product + click on cart icon + click on map icon
         productAdapter = ProductAdapter(
             productList,
             onProductClick = { selectedProduct ->
@@ -120,17 +106,20 @@ class ShoppingFragment : Fragment() {
                         categoryId = catId,
                         onSuccess = {
                             Toast.makeText(requireContext(), "Added to cart successfully", Toast.LENGTH_SHORT).show()
+                            refreshCartBadge()
                         },
                         onError = { e ->
                             Toast.makeText(requireContext(), "fail add to cart=(: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
                         }
                     )
                 }
+            },
+            onMapClick = { p ->
+                openMapForProduct(p)
             }
         )
 
         //link pro with its rv
-        rvProducts.adapter = productAdapter
         rvProducts.adapter = productAdapter
 
         //load data from firebase instead of temp data
@@ -167,24 +156,6 @@ class ShoppingFragment : Fragment() {
     }
 
     private fun loadProductsForCategory(categoryId: String) {
-//        //temp data
-//        productList.clear()
-//        when (categoryId) {
-//            "1" -> {
-//                productList.add(Product("p1", "Phone", 299.0))
-//                productList.add(Product("p2", "Headset", 49.0))
-//            }
-//            "2" -> {
-//                productList.add(Product("p3", "T-Shirt", 19.0))
-//                productList.add(Product("p4", "Jacket", 79.0))
-//            }
-//            else -> {
-//                productList.add(Product("p5", "Generic Item", 9.99))
-//            }
-//        }
-//        //notify any registered observers that the data set has changed.
-//        productAdapter.notifyDataSetChanged()
-
         //load category products from firebase
         fs.getProductsOfCategory(
             categoryId = categoryId,
@@ -199,4 +170,49 @@ class ShoppingFragment : Fragment() {
             }
         )
     }
+
+    //update badge = sum of qty
+    private fun refreshCartBadge() {
+        fs.getCartCount(
+            onSuccess = { total ->
+                (requireActivity() as? CartBadgeHost)?.setCartBadge(total)
+            },
+            onError = {  }
+        )
+    }
+
+    // ------------------------------------------------------------
+    // open external Google Maps with a route (line) from current location -> product
+    private fun openMapForProduct(p: Product) {
+        val lat = p.latitude
+        val lng = p.longitude
+
+        if (lat != null && lng != null) {
+            val navUri = Uri.parse("google.navigation:q=$lat,$lng&mode=d")
+            val navIntent = Intent(Intent.ACTION_VIEW, navUri).apply {
+                setPackage("com.google.android.apps.maps")
+            }
+            try {
+                startActivity(navIntent)
+            } catch (_: Exception) {
+                val web = Uri.parse("https://www.google.com/maps/dir/?api=1&destination=$lat,$lng&travelmode=driving")
+                startActivity(Intent(Intent.ACTION_VIEW, web))
+            }
+        } else {
+            // no lat & lng ->search
+            val search = Uri.parse("geo:0,0?q=" + Uri.encode(p.pName.ifBlank { "Product" }))
+            val intent = Intent(Intent.ACTION_VIEW, search).apply {
+                setPackage("com.google.android.apps.maps")
+            }
+            try { startActivity(intent) } catch (_: Exception) {
+                startActivity(Intent(Intent.ACTION_VIEW, search))
+            }
+        }
+    }
+
+}
+
+// interface ->to update bdge
+interface CartBadgeHost {
+    fun setCartBadge(count: Long)
 }

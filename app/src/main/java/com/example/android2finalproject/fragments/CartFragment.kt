@@ -5,12 +5,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.android2finalproject.R
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import com.example.android2finalproject.adapters.CartAdapter
+import com.example.android2finalproject.data.FirestoreService
+import com.example.android2finalproject.models.CartItem
 
 /**
  * A simple [Fragment] subclass.
@@ -18,16 +20,14 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class CartFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var rvCart: RecyclerView
+    private lateinit var tvEmpty: TextView
+    private lateinit var cartAdapter: RecyclerView.Adapter<*>
+    private val cartList = arrayListOf<CartItem>()
+    private val fs = FirestoreService()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
@@ -38,23 +38,111 @@ class CartFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_cart, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CartFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CartFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        rvCart  = view.findViewById(R.id.rvCart)
+        tvEmpty = view.findViewById(R.id.tvEmpty)
+        rvCart.layoutManager = LinearLayoutManager(requireContext())
+        cartAdapter = CartAdapter(
+            list = cartList,
+            onAddOne = { item, pos -> addOneToCart(item, pos) },       // +1
+            onDeleteOne = { item, pos -> deleteOneFromCart(item, pos) } // -1 / delete
+        )
+        rvCart.adapter = cartAdapter
+
+        // load data
+        loadCartFromFirestore()
+    }
+
+    // get cart items for current user
+    private fun loadCartFromFirestore() {
+        fs.getCartItems(
+            onSuccess = { list ->
+                cartList.clear()
+                cartList.addAll(list)
+                cartAdapter.notifyDataSetChanged()
+                toggleEmpty(list.isEmpty())
+                refreshCartBadge() //update badge
+            },
+            onError = { e ->
+                Toast.makeText(requireContext(), "fail load cart: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                toggleEmpty(true)
             }
+        )
+    }
+
+    //update qty on fs then locally on badge
+    private fun addOneToCart(item: CartItem, position: Int) {
+        val newQty = item.qty + 1
+        fs.updateCartQty(
+            productId = item.productId,
+            newQty = newQty,
+            onSuccess = {
+                //copy newqty to qty parameter fot the item
+                val updated = item.copy(qty = newQty)
+                cartList[position] = updated
+                cartAdapter.notifyItemChanged(position)
+                refreshCartBadge()
+            },
+            onError = { e ->
+                Toast.makeText(requireContext(), "fail add qty: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+
+    //-1 or 0
+    private fun deleteOneFromCart(item: CartItem, position: Int) {
+        val newQty = (item.qty - 1).coerceAtLeast(0)
+        if (newQty > 0) {
+            fs.updateCartQty(
+                productId = item.productId,
+                newQty = newQty,
+                onSuccess = {
+                    val updated = item.copy(qty = newQty)
+                    cartList[position] = updated
+                    cartAdapter.notifyItemChanged(position)
+                    refreshCartBadge()
+                },
+                onError = { e ->
+                    Toast.makeText(requireContext(), "fail update qty: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                }
+            )
+        } else {
+            fs.removeFromCart(
+                productId = item.productId,
+                onSuccess = {
+                    cartList.removeAt(position)
+                    cartAdapter.notifyItemRemoved(position)
+                    toggleEmpty(cartList.isEmpty())
+                    refreshCartBadge()
+                },
+                onError = { e ->
+                    Toast.makeText(requireContext(), "fail remove item: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                }
+            )
+        }
+    }
+
+    // show togle that empty
+    private fun toggleEmpty(isEmpty: Boolean) {
+        if (isEmpty) {
+            tvEmpty.visibility = View.VISIBLE
+            rvCart.visibility  = View.GONE
+        } else {
+            tvEmpty.visibility = View.GONE
+            rvCart.visibility  = View.VISIBLE
+        }
+    }
+
+    //update badge
+    private fun refreshCartBadge() {
+        fs.getCartCount(
+            onSuccess = { total ->
+                (requireActivity() as? CartBadgeHost)?.setCartBadge(total)
+            },
+            onError = {
+
+            }
+        )
     }
 }

@@ -1,8 +1,8 @@
 package com.example.android2finalproject.models
 
 data class User(
-    var id: String? = null,
-    var name: String? = null,
-    var email: String? = null,
-    var isAdmin: Boolean = false,
+    val id: String? = null,
+    val name: String? = null,
+    val email: String? = null,
+    val isAdmin: Boolean = false,
 )

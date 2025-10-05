@@ -1,4 +1,4 @@
-package com.esraa.shoppingapp.data.model
+package com.example.android2finalproject.models
 
 data class Category(
     val id: String = "",
